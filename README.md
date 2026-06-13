@@ -747,4 +747,4 @@ MIT License — free to use and modify.
 README
 
 echo "README.md created!"
-i want to add this file as readme so give commands   
+ 
