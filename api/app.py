@@ -5,6 +5,19 @@ import pandas as pd
 
 app = Flask(__name__)
 CORS(app)
+@app.route("/")
+def index():
+    return jsonify({
+        "status": "✅ Insider Threat Detection API Running",
+        "endpoints": {
+            "all_alerts": "/api/alerts",
+            "filter_by_severity": "/api/alerts?severity=CRITICAL",
+            "single_alert": "/api/alerts/<alert_id>",
+            "user_profile": "/api/users/<user_id>",
+            "summary": "/api/summary",
+            "metrics": "/api/metrics"
+        }
+    })
 
 def load_alerts():
     with open("outputs/alerts.json") as f:

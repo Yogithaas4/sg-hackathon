@@ -28,6 +28,11 @@ def build_user_baselines(df):
     return baselines
 
 def build_features(df, baselines):
+
+    # Add these to build_features():
+    DEST_RISK = {"local": 0, "cloud_personal": 2, "external_email": 3, "personal_usb": 4}
+    df["destination_risk"] = df["destination"].map(DEST_RISK).fillna(1)
+    df["bulk_export_flag"] = (df["rowcount"] > 10000).astype(int)
     df = df.merge(baselines, on="user_id", suffixes=("", "_base"))
     
     # Sensitivity score
