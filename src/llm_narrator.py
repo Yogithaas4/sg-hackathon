@@ -24,14 +24,20 @@ def build_anomaly_list(row):
     if row.get("sensitivity_score", 0) >= 3:
         anomalies.append(f"Accessed {row.get('resource_sensitivity','high')} sensitivity data")
     if row.get("action_risk", 0) >= 4:
-        anomalies.append("High-risk action: export_data")
+        rowcount = row.get("rowcount", 0)
+        anomalies.append(f"Bulk export ({rowcount:,} records vs typical <100)")
     if row.get("privilege_sensitivity_gap", 0) >= 2:
         anomalies.append("Privilege level below data sensitivity")
     if row.get("stale_account_flag"):
         anomalies.append(f"Account inactive for {row.get('days_inactive',0)} days")
     if row.get("new_user_sensitive_access"):
         anomalies.append("New user accessing sensitive data")
+    # Add destination risk
+    dest = row.get("destination", "")
+    if dest in ["personal_usb", "external_email"]:
+        anomalies.append(f"Risky destination: {dest.replace('_',' ')} (exfiltration risk)")
     return anomalies
+       
 
 def generate_narrative(row):
     anomalies = build_anomaly_list(row)
@@ -92,5 +98,6 @@ def generate_alerts_json(df, top_n=50):
             "recommendation": narrative_data["recommendation"]
         }
         alerts.append(alert)
+
 
     return alerts
